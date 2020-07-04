@@ -1,5 +1,6 @@
 VERSION 5.00
 Object = "{67397AA1-7FB1-11D0-B148-00A0C922E820}#6.0#0"; "MSADODC.OCX"
+Object = "{F9043C88-F6F2-101A-A3C9-08002B2F49FB}#1.2#0"; "comdlg32.ocx"
 Begin VB.Form Form2 
    Caption         =   "Form2"
    ClientHeight    =   8130
@@ -10,6 +11,21 @@ Begin VB.Form Form2
    ScaleHeight     =   8130
    ScaleWidth      =   12030
    StartUpPosition =   3  'Windows Default
+   Begin VB.CommandButton Command7 
+      Caption         =   "Foto"
+      Height          =   375
+      Left            =   7200
+      TabIndex        =   25
+      Top             =   7200
+      Width           =   615
+   End
+   Begin MSComDlg.CommonDialog CommonDialog1 
+      Left            =   120
+      Top             =   1200
+      _ExtentX        =   847
+      _ExtentY        =   847
+      _Version        =   393216
+   End
    Begin VB.CommandButton Command6 
       Caption         =   "ELIMINAR"
       Height          =   495
@@ -103,8 +119,8 @@ Begin VB.Form Form2
       ForeColor       =   -2147483640
       Orientation     =   0
       Enabled         =   -1
-      Connect         =   "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\Users\MerrickGT\Desktop\Importantes\DB\Zoologico.mdb;Persist Security Info=False"
-      OLEDBString     =   "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\Users\MerrickGT\Desktop\Importantes\DB\Zoologico.mdb;Persist Security Info=False"
+      Connect         =   "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\Users\MerrickGT\Desktop\Proyecto1\Zoologico.mdb;Persist Security Info=False"
+      OLEDBString     =   "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=C:\Users\MerrickGT\Desktop\Proyecto1\Zoologico.mdb;Persist Security Info=False"
       OLEDBFile       =   ""
       DataSourceName  =   ""
       OtherAttributes =   ""
@@ -448,11 +464,18 @@ Private Sub Command3_Click()
     Command3.Enabled = False
     Command5.Enabled = False
     Command6.Enabled = False
+    Command7.Enabled = True
     
     Text1.SetFocus
+    ''' Elimina el contenido donde se muestra el nombre de la foto
+    Label11.Caption = ""
+    ''' Borra el contenido del Image al no encontrar una foto
+    Image2.Picture = LoadPicture(Label11.Caption)
+    
 End Sub
 
 Private Sub Command4_Click()
+    FileCopy CommonDialog1.FileName, App.Path & "\\" & CommonDialog1.FileTitle
     Adodc1.Recordset.Update
     Adodc1.Recordset.MoveFirst
     X = App.Path
@@ -472,6 +495,7 @@ Private Sub Command4_Click()
     Command3.Enabled = True
     Command5.Enabled = True
     Command6.Enabled = True
+    Command7.Enabled = False
     
 End Sub
 
@@ -502,6 +526,18 @@ Private Sub Command6_Click()
     Image2.Picture = LoadPicture(X & "\" & Label11.Caption)
 End Sub
 
+Private Sub Command7_Click()
+    CommonDialog1.ShowOpen
+    Image2.Picture = LoadPicture(CommonDialog1.FileName)
+    Label11.Caption = CommonDialog1.FileTitle
+    
+    If Label11.Caption = "" Then
+        MsgBox ("Seleccione una imagen para continuar")
+    Else
+        Label11.Caption = CommonDialog1.FileTitle
+    End If
+End Sub
+
 Private Sub Form_Load()
     X = App.Path
     Image2.Picture = LoadPicture(X & "\" & Label11.Caption)
@@ -514,5 +550,6 @@ Private Sub Form_Load()
     Text7.Enabled = False
     Text8.Enabled = False
     Command4.Enabled = False
+    Command7.Enabled = False
 End Sub
 
